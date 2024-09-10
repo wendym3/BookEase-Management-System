@@ -1,0 +1,20 @@
+div {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #141e30, #243b55);
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  color: white;
+  font-family: 'Roboto', sans-serif;
+}
+
+h2 {
+  text-align: center;
+  font-size: 1.8rem;
+}
+
+p {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}

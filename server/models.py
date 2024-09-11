@@ -17,18 +17,17 @@ db = SQLAlchemy(metadata=metadata)
 class Admin(db.Model, SerializerMixin):
     __tablename__ = 'admins'
 
-    serialize_rules = ('-books.admin', '-members.admin', '-borrow_records.admin')
+    serialize_rules = ('-members', '-borrow_records.admin')
 
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-
-    books = db.relationship('Book', back_populates='admin')
+    
+    # Relationships
     members = db.relationship('Member', back_populates='admin')
     borrow_records = db.relationship('BorrowRecord', back_populates='admin')
-
 
 class Book(db.Model, SerializerMixin):
     __tablename__ = 'books'
@@ -67,12 +66,29 @@ class BorrowRecord(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     borrow_date = db.Column(db.DateTime, nullable=False)
-    return_date = db.Column(db.DateTime, nullable=False)
+    return_date = db.Column(db.DateTime, nullable=True)
     condition_on_return = db.Column(db.String, nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'))
     member_id = db.Column(db.Integer, db.ForeignKey('members.id'))
     admin_id = db.Column(db.Integer, db.ForeignKey('admins.id'))
 
+    # Relationships
     book = db.relationship('Book', back_populates='borrow_records')
     member = db.relationship('Member', back_populates='borrow_records')
     admin = db.relationship('Admin', back_populates='borrow_records')
+
+
+    # Custom serialization method for better date formatting and relationship inclusion
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'borrow_date': self.borrow_date.strftime('%Y-%m-%d %H:%M:%S') if self.borrow_date else None,
+            'return_date': self.return_date.strftime('%Y-%m-%d %H:%M:%S') if self.return_date else None,
+            'condition_on_return': self.condition_on_return,
+            'book_id': self.book_id,
+            'member_id': self.member_id,
+            'admin_id': self.admin_id,
+            'book': self.book.to_dict() if self.book else None,
+            'member': self.member.to_dict() if self.member else None,
+            'admin': self.admin.to_dict() if self.admin else None
+        }

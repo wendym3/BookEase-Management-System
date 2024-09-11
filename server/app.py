@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, abort
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
 from models import db, Member, Book, BorrowRecord
+from datetime import datetime
+
 
 app = Flask(__name__)
 
@@ -127,14 +129,27 @@ def get_member(id):
 
 @app.route('/members/<int:id>', methods=['PATCH'])
 def update_member(id):
-    data = request.get_json()
     member = Member.query.get_or_404(id)
-    member.first_name = data.get('first_name', member.first_name)
-    member.last_name = data.get('last_name', member.last_name)
-    member.email = data.get('email', member.email)
-    member.password = bcrypt.generate_password_hash(data.get('password', member.password)).decode('utf-8')
+    data = request.get_json()
+
+    if 'first_name' in data:
+        member.first_name = data['first_name']
+    if 'last_name' in data:
+        member.last_name = data['last_name']
+    if 'email' in data:
+        member.email = data['email']
+    if 'password' in data:
+        member.password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    if 'admin_id' in data:
+        if Admin.query.get(data['admin_id']):  # Check if the admin exists
+            member.admin_id = data['admin_id']
+        else:
+            return jsonify({'error': 'Admin not found'}), 404
+
     db.session.commit()
     return jsonify(member.to_dict()), 200
+
+
 
 @app.route('/members/<int:id>', methods=['DELETE'])
 def delete_member(id):
@@ -143,19 +158,33 @@ def delete_member(id):
     db.session.commit()
     return jsonify({'message': 'Member deleted successfully'}), 204
 
+from datetime import datetime
+
 @app.route('/borrow_records', methods=['POST'])
 def create_borrow_record():
     data = request.get_json()
-    new_borrow_record = BorrowRecord(
-        borrow_date=data['borrow_date'],
-        return_date=data.get('return_date'),
-        condition_on_return=data['condition_on_return'],
-        member_id=data['member_id'],
-        book_id=data['book_id']
-    )
-    db.session.add(new_borrow_record)
-    db.session.commit()
-    return jsonify(new_borrow_record.to_dict()), 201
+
+    try:
+        # Convert the date strings to Python datetime objects
+        borrow_date = datetime.strptime(data['borrow_date'], '%Y-%m-%d')
+        return_date = datetime.strptime(data.get('return_date'), '%Y-%m-%d') if data.get('return_date') else None
+
+        new_borrow_record = BorrowRecord(
+            borrow_date=borrow_date,
+            return_date=return_date,
+            condition_on_return=data['condition_on_return'],
+            member_id=data['member_id'],
+            book_id=data['book_id'],
+            admin_id=data.get('admin_id')  # Add this to avoid None if not provided
+        )
+
+        db.session.add(new_borrow_record)
+        db.session.commit()
+        return jsonify(new_borrow_record.to_dict()), 201
+
+    except ValueError:
+        return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
+
 
 @app.route('/borrow_records/<int:id>', methods=['GET'])
 def get_borrow_record(id):
@@ -164,15 +193,40 @@ def get_borrow_record(id):
 
 @app.route('/borrow_records/<int:id>', methods=['PATCH'])
 def update_borrow_record(id):
+    borrow_record = BorrowRecord.query.get(id)
+    if not borrow_record:
+        abort(404, description="Borrow record not found")
+
     data = request.get_json()
-    borrow_record = BorrowRecord.query.get_or_404(id)
-    borrow_record.borrow_date = data.get('borrow_date', borrow_record.borrow_date)
-    borrow_record.return_date = data.get('return_date', borrow_record.return_date)
-    borrow_record.condition_on_return = data.get('condition_on_return', borrow_record.condition_on_return)
-    borrow_record.member_id = data.get('member_id', borrow_record.member_id)
-    borrow_record.book_id = data.get('book_id', borrow_record.book_id)
+
+    if 'borrow_date' in data:
+        try:
+            borrow_record.borrow_date = datetime.strptime(data['borrow_date'], '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            return jsonify({"error": "Invalid date format. Use YYYY-MM-DD HH:MM:SS."}), 400
+    
+    if 'return_date' in data:
+        try:
+            borrow_record.return_date = datetime.strptime(data['return_date'], '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            return jsonify({"error": "Invalid date format. Use YYYY-MM-DD HH:MM:SS."}), 400
+    
+    if 'condition_on_return' in data:
+        borrow_record.condition_on_return = data['condition_on_return']
+    
+    if 'book_id' in data:
+        borrow_record.book_id = data['book_id']
+    
+    if 'member_id' in data:
+        borrow_record.member_id = data['member_id']
+    
+    if 'admin_id' in data:
+        borrow_record.admin_id = data['admin_id']
+
     db.session.commit()
+
     return jsonify(borrow_record.to_dict()), 200
+
 
 @app.route('/borrow_records/<int:id>', methods=['DELETE'])
 def delete_borrow_record(id):

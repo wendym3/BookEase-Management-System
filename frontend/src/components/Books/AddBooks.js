@@ -1,57 +1,34 @@
-import React, { useState } from 'react';
-import '../../styles/AddBooks.css';
+import { useState } from 'react';
 
-const AddBooks = ({ onAddBook }) => {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [publishedDate, setPublishedDate] = useState('');
-  const [genre, setGenre] = useState(''); // Fixed state declaration for genre
+function AddBook() {
+  const [formData, setFormData] = useState({ title: '', author: '' });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newBook = { title, author, publishedDate, genre };
-    onAddBook(newBook);
-    setTitle('');
-    setAuthor('');
-    setPublishedDate('');
-    setGenre(''); // Clear genre after submission
+    fetch('http://127.0.0.1:5555/books', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}` 
+
+       },
+      body: JSON.stringify(formData)
+    })
+      .then(res => res.json())
+      .then(data => console.log(data))
+      .catch(err => console.error(err));
   };
 
   return (
-    <div>
-      <h2>Add a Book</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Author"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-          required
-        />
-        <input
-          type="date"
-          value={publishedDate}
-          onChange={(e) => setPublishedDate(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Genre"
-          value={genre} // Fixed value for genre
-          onChange={(e) => setGenre(e.target.value)} // Correctly handle genre input
-          required
-        />
-        <button type="submit">Add Book</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input name="title" placeholder="Title" value={formData.title} onChange={handleChange} />
+      <input name="author" placeholder="Author" value={formData.author} onChange={handleChange} />
+      <button type="submit">Add Book</button>
+    </form>
   );
-};
+}
 
-export default AddBooks;
+export default AddBook;

@@ -1,59 +1,26 @@
-import React, { useState } from 'react';
-import '../../styles/BookList.css';
+import { useEffect, useState } from 'react';
+import BookCard from './BookCard';
+import './BookList.css';
+function BookList() {
+  const [books, setBooks] = useState([]);
 
-const BookList = ({ books }) => {
-  const [sortKey, setSortKey] = useState('title');
-  const [sortOrder, setSortOrder] = useState('asc');
-
-  const sortBooks = (books) => {
-    return books.sort((a, b) => {
-      let valueA = a[sortKey];
-      let valueB = b[sortKey];
-
-      if (sortOrder === 'asc') {
-        return valueA > valueB ? 1 : -1;
-      } else {
-        return valueA < valueB ? 1 : -1;
-      }
-    });
-  };
-
-  const handleSort = (key) => {
-    if (sortKey === key) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortKey(key);
-      setSortOrder('asc');
-    }
-  };
-
-  const sortedBooks = sortBooks(books);
+  useEffect(() => {
+    fetch('http://127.0.0.1:5555/books',)
+      .then(res => res.json())
+      .then(data => {setBooks(Array.isArray(data)? data:[]);})
+      .catch(err => console.error(err));
+  }, []);
 
   return (
     <div>
-      <h2>Book List</h2>
-      <table>
-        <thead>
-          <tr>
-            <th onClick={() => handleSort('title')}>Title</th>
-            <th onClick={() => handleSort('author')}>Author</th>
-            <th onClick={() => handleSort('publishedDate')}>Published Date</th>
-            <th onClick={() => handleSort('genre')}>Genre</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedBooks.map((book, index) => (
-            <tr key={index}>
-              <td>{book.title}</td>
-              <td>{book.author}</td>
-              <td>{book.publishedDate}</td>
-              <td>{book.genre}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h1>Books</h1>
+      <ul>
+        {books.map(book => (
+          <BookCard key={book.id}>{book.title} by {book.author}</BookCard>
+        ))}
+      </ul>
     </div>
   );
-};
+}
 
 export default BookList;

@@ -1,0 +1,39 @@
+.navbar {
+  background-color: #7883a7;
+  color: rgb(232, 231, 238);
+  padding: 10px 20px;
+  margin-top: auto;
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-title {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 15px;
+}
+
+.navbar-links a, .navbar-links button {
+  color: white;
+  text-decoration: none;
+  font-size: 1em;
+}
+
+.navbar-links a:hover, .navbar-links button:hover {
+  text-decoration: underline;
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}

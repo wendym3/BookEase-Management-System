@@ -1,3 +1,5 @@
+# models.py
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from sqlalchemy_serializer import SerializerMixin
@@ -17,17 +19,18 @@ db = SQLAlchemy(metadata=metadata)
 class Admin(db.Model, SerializerMixin):
     __tablename__ = 'admins'
 
-    serialize_rules = ('-members', '-borrow_records.admin')
+    serialize_rules = ('-members', '-borrow_records.admin', '-books')
 
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-    
+
     # Relationships
     members = db.relationship('Member', back_populates='admin')
     borrow_records = db.relationship('BorrowRecord', back_populates='admin')
+    books = db.relationship('Book', back_populates='admin')
 
 class Book(db.Model, SerializerMixin):
     __tablename__ = 'books'
@@ -41,7 +44,6 @@ class Book(db.Model, SerializerMixin):
 
     admin = db.relationship('Admin', back_populates='books')
     borrow_records = db.relationship('BorrowRecord', back_populates='book')
-
 
 class Member(db.Model, SerializerMixin):
     __tablename__ = 'members'
@@ -57,7 +59,6 @@ class Member(db.Model, SerializerMixin):
 
     admin = db.relationship('Admin', back_populates='members')
     borrow_records = db.relationship('BorrowRecord', back_populates='member')
-
 
 class BorrowRecord(db.Model, SerializerMixin):
     __tablename__ = 'borrow_records'
@@ -76,19 +77,3 @@ class BorrowRecord(db.Model, SerializerMixin):
     book = db.relationship('Book', back_populates='borrow_records')
     member = db.relationship('Member', back_populates='borrow_records')
     admin = db.relationship('Admin', back_populates='borrow_records')
-
-
-    # Custom serialization method for better date formatting and relationship inclusion
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'borrow_date': self.borrow_date.strftime('%Y-%m-%d %H:%M:%S') if self.borrow_date else None,
-            'return_date': self.return_date.strftime('%Y-%m-%d %H:%M:%S') if self.return_date else None,
-            'condition_on_return': self.condition_on_return,
-            'book_id': self.book_id,
-            'member_id': self.member_id,
-            'admin_id': self.admin_id,
-            'book': self.book.to_dict() if self.book else None,
-            'member': self.member.to_dict() if self.member else None,
-            'admin': self.admin.to_dict() if self.admin else None
-        }

@@ -4,11 +4,13 @@ from flask import Flask, request, jsonify, session, abort
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
-from models import db, Member, Book, BorrowRecord
+from models import db, Member, Book, BorrowRecord, Admin
 from datetime import datetime
+from flask_cors import CORS, cross_origin
 
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
 # Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
@@ -38,7 +40,9 @@ def check_if_logged_in():
 def index():
     return '<h1>Welcome to the Library Management System API</h1>'
 
+
 @app.route('/signup', methods=['POST'])
+@cross_origin() 
 def signup():
     data = request.get_json()
     password_hash = bcrypt.generate_password_hash(data['password']).decode('utf-8')
@@ -58,6 +62,7 @@ def signup():
         return jsonify({'message': 'Email already exists'}), 400
 
 @app.route('/login', methods=['POST'])
+@cross_origin() 
 def login():
     data = request.get_json()
     member = Member.query.filter_by(email=data['email']).first()
@@ -67,6 +72,7 @@ def login():
     return jsonify({'message': 'Invalid credentials'}), 401
 
 @app.route('/check_session', methods=['GET'])
+@cross_origin() 
 def check_session():
     user_id = session.get('user_id')
     if user_id:
@@ -75,11 +81,13 @@ def check_session():
     return jsonify({'error': 'Unauthorized'}), 401
 
 @app.route('/logout', methods=['DELETE'])
+@cross_origin() 
 def logout():
     session.pop('user_id', None)
     return jsonify({'message': 'Logged out successfully'}), 204
 
 @app.route('/books', methods=['POST'])
+@cross_origin() 
 def create_book():
     data = request.get_json()
     new_book = Book(title=data['title'], author=data['author'])
@@ -88,11 +96,13 @@ def create_book():
     return jsonify(new_book.to_dict()), 201
 
 @app.route('/books', methods=['GET'])
+@cross_origin() 
 def get_books():
     books = [book.to_dict() for book in Book.query.all()]
     return jsonify(books), 200
 
 @app.route('/books/<int:id>', methods=['PATCH'])
+@cross_origin() 
 def update_book(id):
     data = request.get_json()
     book = Book.query.get_or_404(id)
@@ -102,6 +112,7 @@ def update_book(id):
     return jsonify(book.to_dict()), 200
 
 @app.route('/books/<int:id>', methods=['DELETE'])
+@cross_origin() 
 def delete_book(id):
     book = Book.query.get_or_404(id)
     db.session.delete(book)
@@ -109,6 +120,7 @@ def delete_book(id):
     return jsonify({'message': 'Book deleted successfully'}), 204
 
 @app.route('/members', methods=['POST'])
+@cross_origin() 
 def create_member():
     data = request.get_json()
     password_hash = bcrypt.generate_password_hash(data['password']).decode('utf-8')
@@ -123,11 +135,13 @@ def create_member():
     return jsonify(new_member.to_dict()), 201
 
 @app.route('/members/<int:id>', methods=['GET'])
+@cross_origin() 
 def get_member(id):
     member = Member.query.get_or_404(id)
     return jsonify(member.to_dict()), 200
 
 @app.route('/members/<int:id>', methods=['PATCH'])
+@cross_origin() 
 def update_member(id):
     member = Member.query.get_or_404(id)
     data = request.get_json()
@@ -152,6 +166,7 @@ def update_member(id):
 
 
 @app.route('/members/<int:id>', methods=['DELETE'])
+@cross_origin() 
 def delete_member(id):
     member = Member.query.get_or_404(id)
     db.session.delete(member)
@@ -161,6 +176,7 @@ def delete_member(id):
 from datetime import datetime
 
 @app.route('/borrow_records', methods=['POST'])
+@cross_origin() 
 def create_borrow_record():
     data = request.get_json()
 
@@ -187,11 +203,13 @@ def create_borrow_record():
 
 
 @app.route('/borrow_records/<int:id>', methods=['GET'])
+@cross_origin() 
 def get_borrow_record(id):
     borrow_record = BorrowRecord.query.get_or_404(id)
     return jsonify(borrow_record.to_dict()), 200
 
 @app.route('/borrow_records/<int:id>', methods=['PATCH'])
+@cross_origin() 
 def update_borrow_record(id):
     borrow_record = BorrowRecord.query.get(id)
     if not borrow_record:
@@ -229,6 +247,7 @@ def update_borrow_record(id):
 
 
 @app.route('/borrow_records/<int:id>', methods=['DELETE'])
+@cross_origin() 
 def delete_borrow_record(id):
     borrow_record = BorrowRecord.query.get_or_404(id)
     db.session.delete(borrow_record)

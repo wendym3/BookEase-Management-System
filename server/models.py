@@ -3,7 +3,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from sqlalchemy_serializer import SerializerMixin
-
+from flask_bcrypt import Bcrypt
 convention = {
     "ix": "ix_%(column_0_label)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",
@@ -13,7 +13,7 @@ convention = {
 }
 
 metadata = MetaData(naming_convention=convention)
-
+bcrypt = Bcrypt()
 db = SQLAlchemy(metadata=metadata)
 
 class Admin(db.Model, SerializerMixin):
@@ -55,7 +55,16 @@ class Member(db.Model, SerializerMixin):
     last_name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
+
+    # Method to hash the password when setting it
+    def set_password(self, password):
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    # Method to check if the provided password matches the hashed password
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)
     admin_id = db.Column(db.Integer, db.ForeignKey('admins.id'))
+    
 
     admin = db.relationship('Admin', back_populates='members')
     borrow_records = db.relationship('BorrowRecord', back_populates='member')

@@ -1,30 +1,28 @@
+/* src/components/BookCard.css */
+
 .book-card {
-    background-color: #6535b1;
-    border: 1px solid #d63c3c;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    width: 200px;
-    margin: 1rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .book-card-content {
-    padding: 10rem;
-  }
-  
-  .book-title {
-    font-size: 1rem;
-    margin: 0;
-  }
-  
-  .book-author {
-    color: #555;
-    margin: 0;
-  }
-  
-  .book-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  }
-  
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.book-card button {
+  margin-right: 10px;
+}
+
+.delete-comment-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-size: 0.8em;
+}
+
+.delete-comment-button:hover {
+  background-color: #c82333;
+}

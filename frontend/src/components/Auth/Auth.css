@@ -1,71 +1,44 @@
 .auth-container {
   padding: 20px;
-  max-width: 1500px;
+  max-width: 1200px; /* Adjust as needed */
   margin: auto;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row; /* Align side by side */
+  justify-content: center;
 }
 
 .auth-content {
   display: flex;
-  justify-content: space-between;
-  width: 70%;
+  width: 100%;
 }
 
 .description-card {
   background-color: #f8f9fa;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 20px;
-  width: 45%;
+  padding: 15px;
+  width: 100%;
+  max-width: 400px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
 .description-card h2 {
   margin-top: 0;
-  font-size: larger;
-  text-align: center;
-  
+  font-size: 1.25em;
+  color: #333;
 }
 
 .form-container {
-  width: 45%;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 10px;
-}
-
-.form-group input {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  max-width: 360px;
+  margin-left: 20px; /* Spacing between card and form */
 }
 
-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+/* Ensure these styles do not affect About and Contact pages */
+.about-container,
+.contact-container {
+  padding: 20px;
+  max-width: 1200px; /* Same as auth container if needed */
+  margin: auto;
 }
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.error-message {
-  color: red;
-  margin-top: 10px;
-}
-
-

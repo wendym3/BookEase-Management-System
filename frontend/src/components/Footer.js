@@ -1,5 +1,3 @@
-
-
 import './Footer.css';
 
 function Footer() {
@@ -8,8 +6,8 @@ function Footer() {
       <div className="footer-content">
         <p>&copy; 2024 Library System. All rights reserved.</p>
         <div className="social-media">
-          <a href="http://Facebook.com" className="social-icon">Facebook</a>
-          <a href="http://X.com" className="social-icon">Twitter</a>
+          <a href="http://facebook.com" className="social-icon">Facebook</a>
+          <a href="http://twitter.com" className="social-icon">Twitter</a>
           <a href="http://instagram.com" className="social-icon">Instagram</a>
         </div>
       </div>

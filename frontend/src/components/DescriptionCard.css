@@ -1,0 +1,48 @@
+.description-card {
+  background-color: #ffffff; /* White background for card */
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin: 100px auto; /* Center the card horizontally */
+}
+
+.description-card h1, 
+.description-card h2 {
+  font-size: 2em; /* Header font size */
+  color: #333333;
+}
+
+.description-card p {
+  font-size: 1.2em; /* Description font size */
+  color: #160202;
+}
+
+.footer {
+  background-color: #397925;
+  color: rgb(22, 6, 6);
+  padding: 10px;
+  text-align: center;
+  margin-top: 100px;
+  width: 100%;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.social-media { 
+  margin-top: 10px;
+}
+
+.social-icon {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+.social-icon:hover {
+  text-decoration: underline;
+}

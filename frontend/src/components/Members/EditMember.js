@@ -13,10 +13,18 @@ function EditMember() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:5555/members/${id}`)
-      .then(res => res.json())
+    fetch(`http://127.0.0.1:5555/members/${id}`, {
+      method: 'GET',
+      credentials: 'include', // Ensure session cookies are included
+    })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Error fetching member data');
+        }
+        return res.json();
+      })
       .then(data => setFormData(data))
-      .catch(err => setError('Error fetching member data'));
+      .catch(err => setError(err.message));
   }, [id]);
 
   const handleChange = (e) => {
@@ -31,6 +39,7 @@ function EditMember() {
     fetch(`http://127.0.0.1:5555/members/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', // Ensure session cookies are included
       body: JSON.stringify(formData)
     })
       .then(res => {
@@ -40,7 +49,7 @@ function EditMember() {
         return res.json();
       })
       .then(() => {
-        navigate(`/members/${id}`);
+        navigate(`/members/${id}`); // Corrected navigation syntax
       })
       .catch(err => setError(err.message));
   };
@@ -49,10 +58,35 @@ function EditMember() {
     <form onSubmit={handleSubmit}>
       <h1>Edit Member</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <input name="first_name" placeholder="First Name" value={formData.first_name} onChange={handleChange} required />
-      <input name="last_name" placeholder="Last Name" value={formData.last_name} onChange={handleChange} required />
-      <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-      <input name="password" type="password" placeholder="Password" value={formData.password} onChange={handleChange} />
+      <input
+        name="first_name"
+        placeholder="First Name"
+        value={formData.first_name}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="last_name"
+        placeholder="Last Name"
+        value={formData.last_name}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="email"
+        type="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="password"
+        type="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={handleChange}
+      />
       <button type="submit">Update Member</button>
     </form>
   );

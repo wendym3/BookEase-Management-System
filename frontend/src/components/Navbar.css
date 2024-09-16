@@ -1,8 +1,9 @@
+/* Navbar.css */
+
 .navbar {
-  background-color: #7883a7;
-  color: rgb(232, 231, 238);
-  padding: 10px 20px;
-  margin-top: auto;
+  background-color: #397925;
+  color: rgb(255, 255, 255);
+  padding: 1rem;
 }
 
 .navbar-content {
@@ -12,28 +13,31 @@
 }
 
 .navbar-title {
-  margin: 0;
-  font-size: 1.5em;
+  font-size: 1.5rem;
 }
 
 .navbar-links {
   display: flex;
-  gap: 15px;
+  gap: 1rem;
 }
 
-.navbar-links a, .navbar-links button {
-  color: white;
+.navbar-link {
+  color: rgb(255, 255, 255);
   text-decoration: none;
-  font-size: 1em;
 }
 
-.navbar-links a:hover, .navbar-links button:hover {
+.navbar-link:hover {
   text-decoration: underline;
 }
 
 .logout-button {
-  background: none;
+  background-color: #e74c3c;
   border: none;
+  color: white;
+  padding: 0.5rem 1rem;
   cursor: pointer;
-  padding: 0;
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
 }

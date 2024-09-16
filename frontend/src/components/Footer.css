@@ -1,29 +1,41 @@
 .footer {
-    background-color: #343a40;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    margin-top: 100px;
-    margin-bottom: auto;
-    width: 100%;
+  background-color:  #397925; /* Dark background color */
+  color: white; /* White text color */
+  padding: 20px; /* Increased padding for better spacing */
+  text-align: center; /* Center text alignment */
+  margin-top: 100px; /* Space above the footer */
+  width: 100vw; /* Full width */
+  left:0;
+  right:0;
+}
+
+.footer-content {
+  max-width: 1200px; /* Maximum width of the content */
+  margin: auto; /* Center content horizontally */
+}
+
+.social-media { 
+  margin-top: 10px; /* Space above social media icons */
+}
+
+.social-icon {
+  color: white; /* White text for icons */
+  margin: 0 10px; /* Space between icons */
+  text-decoration: none; /* Remove underline from links */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.social-icon:hover {
+  text-decoration: underline; /* Underline on hover */
+  color: #007bff; /* Change color on hover (optional) */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .footer {
+      padding: 15px; /* Adjust padding on smaller screens */
   }
-  
-  .footer-content {
-    max-width: 1200px;
-    margin: auto;
-  }
-  
-  .social-media { 
-    margin-top: 10px;
-  }
-  
   .social-icon {
-    color: white;
-    margin: 0 10px;
-    text-decoration: none;
+      margin: 0 5px; /* Reduce margin between icons on small screens */
   }
-  
-  .social-icon:hover {
-    text-decoration: underline;
-  }
-  
+}
